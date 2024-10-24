@@ -1,0 +1,54 @@
+###
+services:
+  anything:
+    image: openaide/anythingllm
+    container_name: anythingllm
+    # ports:
+    # - "3001:3001"
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile
+      args:
+        ARG_UID: ${UID:-1000}
+        ARG_GID: ${GID:-1000}
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      # Adjust for your environment
+      - SERVER_PORT=3001
+      - STORAGE_DIR=/app/server/storage
+      - JWT_SECRET="make this a large list of random numbers and letters 20+"
+      ##
+      - LLM_PROVIDER=openai
+      - OPEN_AI_KEY=${OPENAI_API_KEY}
+      - OPEN_MODEL_PREF=gpt-4o
+      #
+      # - LLM_PROVIDER=ollama
+      # - OLLAMA_BASE_PATH=http://127.0.0.1:11434
+      # - OLLAMA_MODEL_PREF=llama2
+      # - OLLAMA_MODEL_TOKEN_LIMIT=4096
+      ##
+      - EMBEDDING_ENGINE=localai
+      - EMBEDDING_BASE_PATH=http://localai:8080/v1
+      - EMBEDDING_MODEL_PREF=text-embedding-ada-002
+      - EMBEDDING_MODEL_MAX_CHUNK_LENGTH=1000
+      # #
+      # - EMBEDDING_ENGINE=ollama
+      # - EMBEDDING_BASE_PATH=http://ollama:11434
+      # - EMBEDDING_MODEL_PREF=nomic-embed-text:latest
+      # - EMBEDDING_MODEL_MAX_CHUNK_LENGTH=8192
+      #
+      - VECTOR_DB=lancedb
+      - WHISPER_PROVIDER=local
+      - TTS_PROVIDER=native
+      - PASSWORDMINCHAR=8
+      # Add any other keys here for services or settings
+      # you can find in the docker/.env.example file
+      - ENABLE_HTTPS=
+      - DISABLE_VIEW_CHAT_HISTORY=1
+      - DISABLE_TELEMETRY=true
+    volumes:
+      - anythingllm_storage:/app/server/storage
+    restart: always
+###
+    
